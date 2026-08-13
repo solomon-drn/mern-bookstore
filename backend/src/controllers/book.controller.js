@@ -27,3 +27,15 @@ export const createBook = async (request, response) => {
     });
   }
 };
+
+export const getBooks = async (request, response) => {
+  try {
+    const books = await Book.find({})
+    response.status(200).json(books)
+  } catch (error) {
+    console.log(error.message)
+    response.status(500).json({
+      message: "server error"
+    })
+  }
+}
