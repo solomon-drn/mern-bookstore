@@ -28,14 +28,89 @@ export const createBook = async (request, response) => {
   }
 };
 
-export const getBooks = async (request, response) => {
+export const getAllBooks = async (request, response) => {
   try {
-    const books = await Book.find({})
-    response.status(200).json(books)
+    const books = await Book.find({});
+    response.status(200).json({
+      count: books.length,
+      data: books,
+    });
   } catch (error) {
-    console.log(error.message)
+    console.log(error.message);
     response.status(500).json({
-      message: "server error"
+      message: "server error",
+    });
+  }
+};
+
+export const getBook = async (request, response) => {
+  try {
+    const { id } = request.params;
+    const book = await Book.findById(id);
+    if (!book) {
+      return response.status(404).json({
+        message: "Book not found"
+      })
+    }
+    return response.status(200).json(book);
+  } catch (error) {
+    console.log(error.message);
+    response.status(500).json({
+      message: "server error",
+    });
+  }
+};
+
+export const updateBook = async (request, response) => {
+  try {
+    if (Object.keys(request.body).length === 0)
+      return response.status(400).json({
+        message: "no data provided for update",
+      });
+
+    const { id } = request.params;
+
+    const book = await Book.findByIdAndUpdate(id, request.body, {
+      new: true,
+      runValidators: true
+    }
+    );
+
+    if (!book) {
+      return response.status(404).json({
+        message: "Book not found",
+      });
+    }
+
+    return response.status(200).json({
+      message: "Book updated successfully"
     })
+  } catch (error) {
+    console.log(error.message);
+    response.status(500).json({
+      message: "server error",
+    });
+  }
+};
+
+export const deleteBook = async (request, response) => {
+  try {
+    const { id } = request.params
+    
+    const book = await Book.findByIdAndDelete(id)
+    if (!book) {
+      return response.status(404).json({
+        message: "Book not found"
+      })
+    }
+    return response.status(200).json({
+      message: "Book deleted successfully"
+    })
+    
+  } catch (error) {
+    console.log(error.message);
+    response.status(500).json({
+      message: "server error",
+    });
   }
 }
