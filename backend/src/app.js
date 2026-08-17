@@ -5,11 +5,12 @@ import cors from "cors"
 const app = express(); //create express application
 
 //allow cross-origin requests
-app.use(cors({
-    origin: "http://localhost:3000",
-    methods: ["GET", "POST", "PATCH", "DELETE"],
-    allowedHeaders: ["Content-Type"]
-}))
+app.use(cors())
+// app.use(cors({
+//     origin: "http://localhost:3000",
+//     methods: ["GET", "POST", "PATCH", "DELETE"],
+//     allowedHeaders: ["Content-Type"]
+// }))
 
 //parse incoming JSON request bodies
 app.use(express.json());
