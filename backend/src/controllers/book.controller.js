@@ -4,16 +4,18 @@ export const createBook = async (request, response, next) => {
   try {
     const { title, author, publishYear } = request.body;
 
-    if (!title || !author || !publishYear) {
+    if (!title?.trim() || !author?.trim() || !publishYear) {
       return response.status(400).send({
         message: "Send all required fields: title, author, publishYear",
       });
     }
 
+    const year = Number(publishYear);
+
     const newBook = {
-      title,
-      author,
-      publishYear,
+      title: title.trim(),
+      author: author.trim(),
+      publishYear: year,
     };
 
     const book = await Book.create(newBook);
@@ -51,16 +53,48 @@ export const getBook = async (request, response, next) => {
   }
 };
 
-export const updateBook = async (request, response,next) => {
+export const updateBook = async (request, response, next) => {
   try {
     if (Object.keys(request.body).length === 0)
       return response.status(400).json({
-        message: "no data provided for update",
+        message: "No data provided for update",
       });
 
     const { id } = request.params;
 
-    const book = await Book.findByIdAndUpdate(id, request.body, {
+    const { title, author, publishYear } = request.body;
+    const updateData = {};
+
+    if (title !== undefined) {
+      if (!title.trim()) {
+        return response.status(400).json({
+          message: "Title cannot be empty",
+        });
+      }
+      updateData.title = title.trim();
+    }
+
+    if (author !== undefined) {
+      if (!author.trim()) {
+        return response.status(400).json({
+          message: "Author cannot be empty",
+        });
+      }
+      updateData.author = author.trim();
+    }
+
+    if (publishYear !== undefined) {
+      const year = Number(publishYear);
+
+      if (!Number.isInteger(year)) {
+        return response.status(400).json({
+          message: "Publish year must be a number",
+        });
+      }
+      updateData.publishYear = year;
+    }
+
+    const book = await Book.findByIdAndUpdate(id, updateData, {
       new: true,
       runValidators: true,
     });
@@ -75,7 +109,7 @@ export const updateBook = async (request, response,next) => {
       message: "Book updated successfully",
     });
   } catch (error) {
-    next(error)
+    next(error);
   }
 };
 
@@ -93,6 +127,6 @@ export const deleteBook = async (request, response, next) => {
       message: "Book deleted successfully",
     });
   } catch (error) {
-    next(error)
+    next(error);
   }
 };
