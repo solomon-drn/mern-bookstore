@@ -1,6 +1,6 @@
 import { Book } from "../models/book.model.js";
 
-export const createBook = async (request, response) => {
+export const createBook = async (request, response, next) => {
   try {
     const { title, author, publishYear } = request.body;
 
@@ -20,15 +20,11 @@ export const createBook = async (request, response) => {
 
     return response.status(201).send(book);
   } catch (error) {
-    console.log(error.message);
-
-    return response.status(500).send({
-      message: error.message,
-    });
+    next(error);
   }
 };
 
-export const getAllBooks = async (request, response) => {
+export const getAllBooks = async (request, response, next) => {
   try {
     const books = await Book.find({});
     response.status(200).json({
@@ -36,32 +32,26 @@ export const getAllBooks = async (request, response) => {
       data: books,
     });
   } catch (error) {
-    console.log(error.message);
-    response.status(500).json({
-      message: "server error",
-    });
+    next(error);
   }
 };
 
-export const getBook = async (request, response) => {
+export const getBook = async (request, response, next) => {
   try {
     const { id } = request.params;
     const book = await Book.findById(id);
     if (!book) {
       return response.status(404).json({
-        message: "Book not found"
-      })
+        message: "Book not found",
+      });
     }
     return response.status(200).json(book);
   } catch (error) {
-    console.log(error.message);
-    response.status(500).json({
-      message: "server error",
-    });
+    next(error);
   }
 };
 
-export const updateBook = async (request, response) => {
+export const updateBook = async (request, response,next) => {
   try {
     if (Object.keys(request.body).length === 0)
       return response.status(400).json({
@@ -72,9 +62,8 @@ export const updateBook = async (request, response) => {
 
     const book = await Book.findByIdAndUpdate(id, request.body, {
       new: true,
-      runValidators: true
-    }
-    );
+      runValidators: true,
+    });
 
     if (!book) {
       return response.status(404).json({
@@ -83,34 +72,27 @@ export const updateBook = async (request, response) => {
     }
 
     return response.status(200).json({
-      message: "Book updated successfully"
-    })
-  } catch (error) {
-    console.log(error.message);
-    response.status(500).json({
-      message: "server error",
+      message: "Book updated successfully",
     });
+  } catch (error) {
+    next(error)
   }
 };
 
-export const deleteBook = async (request, response) => {
+export const deleteBook = async (request, response, next) => {
   try {
-    const { id } = request.params
-    
-    const book = await Book.findByIdAndDelete(id)
+    const { id } = request.params;
+
+    const book = await Book.findByIdAndDelete(id);
     if (!book) {
       return response.status(404).json({
-        message: "Book not found"
-      })
+        message: "Book not found",
+      });
     }
     return response.status(200).json({
-      message: "Book deleted successfully"
-    })
-    
-  } catch (error) {
-    console.log(error.message);
-    response.status(500).json({
-      message: "server error",
+      message: "Book deleted successfully",
     });
+  } catch (error) {
+    next(error)
   }
-}
+};

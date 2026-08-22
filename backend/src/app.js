@@ -1,6 +1,7 @@
 import express from "express";
 import bookRouter from "./routes/book.route.js"; //import routers
 import cors from "cors"
+import errorHandler from "./middleware/errorHandler.js";
 
 const app = express(); //create express application
 
@@ -19,5 +20,6 @@ app.use(express.json());
 
 //route all /api/v1/books/ to the book-related routes
 app.use("/api/v1/books", bookRouter);
+app.use(errorHandler)
 
 export default app;
