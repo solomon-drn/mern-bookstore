@@ -20,7 +20,7 @@ export const createBook = async (request, response, next) => {
 
     const book = await Book.create(newBook);
 
-    return response.status(201).send(book);
+    return response.status(201).json(book);
   } catch (error) {
     next(error);
   }
@@ -29,7 +29,7 @@ export const createBook = async (request, response, next) => {
 export const getAllBooks = async (request, response, next) => {
   try {
     const books = await Book.find({});
-    response.status(200).json({
+    return response.status(200).json({
       count: books.length,
       data: books,
     });
@@ -55,14 +55,15 @@ export const getBook = async (request, response, next) => {
 
 export const updateBook = async (request, response, next) => {
   try {
-    if (Object.keys(request.body).length === 0)
+    const { id } = request.params;
+    const { title, author, publishYear } = request.body;
+
+    if (Object.keys(request.body).length === 0) {
       return response.status(400).json({
         message: "No data provided for update",
       });
+    }
 
-    const { id } = request.params;
-
-    const { title, author, publishYear } = request.body;
     const updateData = {};
 
     if (title !== undefined) {
@@ -107,6 +108,7 @@ export const updateBook = async (request, response, next) => {
 
     return response.status(200).json({
       message: "Book updated successfully",
+      data: book,
     });
   } catch (error) {
     next(error);
