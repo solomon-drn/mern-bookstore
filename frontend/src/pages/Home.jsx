@@ -1,15 +1,16 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { Link } from "react-router";
-import { MdOutlineAddBox } from "react-icons/md";
-import { BsInfoCircle } from "react-icons/bs";
 import Spinner from "../components/Spinner";
-import { AiOutlineEdit } from "react-icons/ai";
-import { MdOutlineDelete } from "react-icons/md";
+import BookCard from "../components/BookCard";
+import ConfirmDialog from "../components/ConfirmDialog";
 
 const Home = () => {
   const [books, setBooks] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+  const [showDialog, setShowDialog] = useState(false);
+  const [selectedBook, setSelectedBook] = useState(null);
+  const [deleting, setDeleting] = useState(false);
 
   useEffect(() => {
     axios
@@ -20,20 +21,51 @@ const Home = () => {
       })
       .catch((error) => {
         console.log(error);
+        setError("Failed to load books. Please try again");
         setLoading(false);
       });
   }, []);
+
+  const handleDeleteClick = (book) => {
+    setSelectedBook(book);
+    setShowDialog(true);
+  };
+
+  const deleteBook = () => {
+    setDeleting(true);
+    setError("");
+
+    axios
+      .delete(`http://localhost:4000/api/v1/books/${selectedBook._id}`)
+      .then(() => {
+        setBooks((currentBooks) =>
+          currentBooks.filter((book) => book._id !== selectedBook._id),
+        );
+
+        setShowDialog(false);
+        setSelectedBook(null);
+        setDeleting(false);
+      })
+      .catch((error) => {
+        setDeleting(false);
+        setError("Failed to delete book. Please try again.");
+        console.log(error);
+      });
+  };
+
   return (
     <div className="p-4">
-      <div className="flex justify-between items-center">
-        <h1 className="text-3xl my-8">Books List</h1>
-
-        <Link to="/books/create">
-          <MdOutlineAddBox className="text-sky-800 text-4xl" />
-        </Link>
+      <div className="flex justify-center items-center">
+        <h1 className="text-3xl my-8">Books</h1>
       </div>
       {loading ? (
         <Spinner />
+      ) : error ? (
+        <p className="text-red-500 text-center">{error}</p>
+      ) : books.length === 0 ? (
+        <p className="text-center text-gray-500 my-8">
+          No books found. Add your first book.
+        </p>
       ) : (
         <table className="w-full border-separate border-spacing-2">
           <thead>
@@ -51,39 +83,26 @@ const Home = () => {
           </thead>
 
           <tbody>
-            {books.map((book, index) => {
-              return (
-                <tr key={book._id} className="h-8">
-                  <td className="border border-slate-700 rounded-md text-center">
-                    {index + 1}
-                  </td>
-                  <td className="border border-slate-700 rounded-md text-center">
-                    {book.title}
-                  </td>
-                  <td className="border border-slate-700 rounded-md text-center max-md:hidden">
-                    {book.author}
-                  </td>
-                  <td className="border border-slate-700 rounded-md text-center max-md:hidden">
-                    {book.publishYear}
-                  </td>
-                  <td className="border border-slate-700 rounded-md text-center">
-                    <div className="flex justify-center gap-x-4">
-                      <Link to={`/books/details/${book._id}`}>
-                        <BsInfoCircle className="text-2xl text-green-800" />
-                      </Link>
-                      <Link to={`/books/edit/${book._id}`}>
-                        <AiOutlineEdit className="text-2xl text-yellow-600" />
-                      </Link>
-                      <Link to={`/books/delete/${book._id}`}>
-                        <MdOutlineDelete className="text-2xl text-red-600" />
-                      </Link>
-                    </div>
-                  </td>
-                </tr>
-              );
-            })}
+            {books.map((book, index) => (
+              <BookCard
+                key={book._id}
+                book={book}
+                index={index}
+                onDelete={handleDeleteClick}
+              />
+            ))}
           </tbody>
         </table>
+      )}
+      {showDialog && (
+        <ConfirmDialog
+          onConfirm={deleteBook}
+          onCancel={() => {
+            setShowDialog(false);
+            setSelectedBook(null);
+          }}
+          loading={deleting}
+        />
       )}
     </div>
   );
