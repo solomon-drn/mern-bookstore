@@ -3,6 +3,7 @@ import axios from "axios";
 import Spinner from "../components/Spinner";
 import BookCard from "../components/BookCard";
 import ConfirmDialog from "../components/ConfirmDialog";
+import Toast from "../components/Toast";
 
 const Home = () => {
   const [books, setBooks] = useState([]);
@@ -11,6 +12,7 @@ const Home = () => {
   const [showDialog, setShowDialog] = useState(false);
   const [selectedBook, setSelectedBook] = useState(null);
   const [deleting, setDeleting] = useState(false);
+  const [toast, setToast] = useState(null);
 
   useEffect(() => {
     axios
@@ -25,6 +27,16 @@ const Home = () => {
         setLoading(false);
       });
   }, []);
+
+  useEffect(() => {
+    if (!toast) return;
+
+    const timer = setTimeout(() => {
+      setToast(null);
+    }, 3000);
+
+    return () => clearTimeout(timer);
+  }, [toast]);
 
   const handleDeleteClick = (book) => {
     setSelectedBook(book);
@@ -45,10 +57,18 @@ const Home = () => {
         setShowDialog(false);
         setSelectedBook(null);
         setDeleting(false);
+        setToast({
+          message: "Book deleted successfully",
+          type: "success",
+        });
       })
       .catch((error) => {
         setDeleting(false);
         setError("Failed to delete book. Please try again.");
+        setToast({
+          message: "Failed to delete book",
+          type: "error",
+        });
         console.log(error);
       });
   };
@@ -104,6 +124,7 @@ const Home = () => {
           loading={deleting}
         />
       )}
+      {toast && <Toast message={toast.message} type={toast.type} />}
     </div>
   );
 };

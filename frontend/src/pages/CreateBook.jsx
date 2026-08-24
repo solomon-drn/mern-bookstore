@@ -4,28 +4,39 @@ import Spinner from "../components/Spinner";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import Button from "../components/Button";
+import Toast from "../components/Toast";
 
 const CreateBook = () => {
   const [title, setTitle] = useState("");
   const [author, setAuthor] = useState("");
   const [publishYear, setPublishYear] = useState("");
   const [loading, setLoading] = useState(false);
-  const [error,setError] = useState("")
+  const [toast, setToast] = useState(null);
   const navigate = useNavigate();
 
   const saveBook = () => {
     setLoading(true);
-    setError("")
+    setToast(null);
     const data = { title, author, publishYear };
     axios
       .post("http://localhost:4000/api/v1/books/create", data)
       .then(() => {
         setLoading(false);
-        navigate("/");
+        navigate("/", {
+          state: {
+            toast: {
+              message: "Book created successfully",
+              type: "success",
+            },
+          },
+        });
       })
       .catch((error) => {
         setLoading(false);
-        setError("Failed to create book. Please try again.")
+        setToast({
+          message: "Failed to create book. Please try again.",
+          type: "error",
+        });
         console.log(error);
       });
   };
@@ -35,11 +46,7 @@ const CreateBook = () => {
       <BackButton />
       <h1 className="text-3xl my-4">Create Book</h1>
       {loading && <Spinner />}
-      {error && (
-        <p className="text-red-500 text-center my-4">
-          {error}
-        </p>
-      )}
+      {toast && <Toast message={toast.message} type={toast.type} />}
       <div className="flex flex-col border-2 border-sky-400 rounded-xl w-[600px] p-4 mx-auto">
         <div className="my-4">
           <label className="text-xl mr-4 text-gray-500">Title</label>
