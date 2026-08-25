@@ -33,7 +33,7 @@ const EditBook = () => {
 
   const editBook = () => {
     setSaving(true);
-    setError("")
+    setError("");
 
     const data = { title, author, publishYear };
 
@@ -41,7 +41,14 @@ const EditBook = () => {
       .patch(`http://localhost:4000/api/v1/books/${id}`, data)
       .then(() => {
         setSaving(false);
-        navigate("/");
+        navigate("/", {
+          state: {
+            toast: {
+              message: "Book updated successfully",
+              type: "success",
+            },
+          },
+        });
       })
       .catch((error) => {
         setSaving(false);
@@ -88,9 +95,9 @@ const EditBook = () => {
             />
           </div>
           <div className="flex justify-center">
-                <Button disabled={saving} onClick={editBook}>
-                  {saving ? "Saving..." : "Save"}
-                </Button>
+            <Button disabled={saving} onClick={editBook}>
+              {saving ? "Saving..." : "Save"}
+            </Button>
           </div>
         </div>
       )}
