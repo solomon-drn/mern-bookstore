@@ -1,7 +1,8 @@
 import express from "express";
 import bookRouter from "./routes/book.route.js"; //import routers
 import cors from "cors"
-import errorHandler from "./middleware/errorHandler.js";
+import errorHandler from "./middleware/errorHandler.middleware.js";
+import authRouter from "./routes/auth.route.js";
 
 const app = express(); //create express application
 
@@ -16,6 +17,7 @@ app.use(cors())
 //parse incoming JSON request bodies
 app.use(express.json());
 
+app.use("/api/v1/auth", authRouter);
 
 
 //route all /api/v1/books/ to the book-related routes
