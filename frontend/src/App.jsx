@@ -5,6 +5,7 @@ import Home from "./pages/Home";
 import EditBook from "./pages/EditBook";
 import CreateBook from "./pages/CreateBook";
 import Showbook from "./pages/ShowBook";
+import Login from "./pages/Login";
 import Navbar from "./components/Navbar";
 
 const App = () => {
@@ -36,6 +37,7 @@ const App = () => {
         <Route path="/books/create" element={<CreateBook />} />
         <Route path="/books/details/:id" element={<Showbook />} />
         <Route path="/books/edit/:id" element={<EditBook />} />
+        <Route path="/login" element={<Login />} />
       </Routes>
     </>
   );

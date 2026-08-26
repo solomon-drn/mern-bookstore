@@ -15,7 +15,7 @@ const Button = ({
       type={type}
       onClick={onClick}
       disabled={disabled}
-      className={`p-2 w-full m-8 ${variants[variant]} disabled:opacity-50 disabled:cursor-not-allowed`}
+      className={`p-2 w-full m-8 cursor-pointer ${variants[variant]} disabled:opacity-50 disabled:cursor-not-allowed`}
     >
       {children}
     </button>
