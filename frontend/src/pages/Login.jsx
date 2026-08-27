@@ -1,7 +1,5 @@
 import { useState } from "react";
-
-import axios from "axios";
-
+import { useAuth } from "../context/AuthContext";
 import Button from "../components/Button";
 import BackButton from "../components/BackButton";
 import Spinner from "../components/Spinner";
@@ -13,32 +11,27 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  const handleLogin = (e) => {
-    e.preventDefault();
+  const { login } = useAuth();
 
-    setLoading(true);
-    setError("");
+  const handleLogin = async (e) => {
+  e.preventDefault();
 
-    const data = {
-      email,
-      password,
-    };
+  setLoading(true);
+  setError("");
 
-    axios
-      .post("http://localhost:4000/api/v1/auth/login", data)
-      .then((response) => {
-        console.log(response.data);
-        setLoading(false);
-      })
-      .catch((error) => {
-        console.log(error);
-        setLoading(false);
-        setError(
-          error.response?.data?.message ||
-            "Failed to login. Please try again."
-        );
-      });
-  };
+  try {
+    const response = await login(email, password);
+
+    console.log(response);
+  } catch (error) {
+    setError(
+      error.response?.data?.message ||
+        "Failed to login. Please try again."
+    );
+  } finally {
+    setLoading(false);
+  }
+};
 
   return (
     <div className="p-4">
