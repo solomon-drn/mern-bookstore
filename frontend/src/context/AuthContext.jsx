@@ -12,8 +12,10 @@ export const AuthProvider = ({ children }) => {
       {
         email,
         password,
-      }
+      },
     );
+
+    localStorage.setItem("token", response.data.token);
 
     setUser(response.data.user);
 
