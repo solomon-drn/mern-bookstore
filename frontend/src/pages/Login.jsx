@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import Button from "../components/Button";
 import BackButton from "../components/BackButton";
@@ -12,26 +13,26 @@ const Login = () => {
   const [error, setError] = useState("");
 
   const { login } = useAuth();
+  const navigate = useNavigate();
 
   const handleLogin = async (e) => {
-  e.preventDefault();
+    e.preventDefault();
 
-  setLoading(true);
-  setError("");
+    setLoading(true);
+    setError("");
 
-  try {
-    const response = await login(email, password);
+    try {
+      const response = await login(email, password);
 
-    console.log(response);
-  } catch (error) {
-    setError(
-      error.response?.data?.message ||
-        "Failed to login. Please try again."
-    );
-  } finally {
-    setLoading(false);
-  }
-};
+      navigate("/")
+    } catch (error) {
+      setError(
+        error.response?.data?.message || "Failed to login. Please try again.",
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="p-4">
@@ -41,20 +42,14 @@ const Login = () => {
 
       {loading && <Spinner />}
 
-      {error && (
-        <p className="text-red-500 text-center my-4">
-          {error}
-        </p>
-      )}
+      {error && <p className="text-red-500 text-center my-4">{error}</p>}
 
       <form
         onSubmit={handleLogin}
         className="flex flex-col border-2 border-sky-400 rounded-xl w-[600px] p-4 mx-auto"
       >
         <div className="my-4">
-          <label className="text-xl mr-4 text-gray-500">
-            Email
-          </label>
+          <label className="text-xl mr-4 text-gray-500">Email</label>
 
           <input
             type="email"
@@ -65,9 +60,7 @@ const Login = () => {
         </div>
 
         <div className="my-4">
-          <label className="text-xl mr-4 text-gray-500">
-            Password
-          </label>
+          <label className="text-xl mr-4 text-gray-500">Password</label>
 
           <input
             type="password"
