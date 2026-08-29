@@ -7,6 +7,7 @@ import CreateBook from "./pages/CreateBook";
 import Showbook from "./pages/ShowBook";
 import Login from "./pages/Login";
 import Navbar from "./components/Navbar";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 const App = () => {
   const [toast, setToast] = useState(null);
@@ -23,10 +24,10 @@ const App = () => {
   }, [toast]);
 
   useEffect(() => {
-  if (location.state?.toast) {
-    setToast(location.state.toast);
-  }
-}, [location.state]);
+    if (location.state?.toast) {
+      setToast(location.state.toast);
+    }
+  }, [location.state]);
 
   return (
     <>
@@ -34,9 +35,23 @@ const App = () => {
       {toast && <Toast message={toast.message} type={toast.type} />}
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/books/create" element={<CreateBook />} />
+        <Route
+          path="/books/create"
+          element={
+            <ProtectedRoute>
+              <CreateBook />
+            </ProtectedRoute>
+          }
+        />
         <Route path="/books/details/:id" element={<Showbook />} />
-        <Route path="/books/edit/:id" element={<EditBook />} />
+        <Route
+          path="/books/edit/:id"
+          element={
+            <ProtectedRoute>
+              <EditBook />
+            </ProtectedRoute>
+          }
+        />
         <Route path="/login" element={<Login />} />
       </Routes>
     </>
