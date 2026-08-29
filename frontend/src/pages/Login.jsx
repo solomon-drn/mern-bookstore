@@ -24,7 +24,7 @@ const Login = () => {
     try {
       const response = await login(email, password);
 
-      navigate("/")
+      navigate("/");
     } catch (error) {
       setError(
         error.response?.data?.message || "Failed to login. Please try again.",
@@ -49,10 +49,14 @@ const Login = () => {
         className="flex flex-col border-2 border-sky-400 rounded-xl w-[600px] p-4 mx-auto"
       >
         <div className="my-4">
-          <label className="text-xl mr-4 text-gray-500">Email</label>
+          <label htmlFor="email" className="text-xl mr-4 text-gray-500">
+            Email
+          </label>
 
           <input
+            id="email"
             type="email"
+            autoComplete="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             className="border-2 border-gray-500 px-4 py-2 w-full"
@@ -60,10 +64,14 @@ const Login = () => {
         </div>
 
         <div className="my-4">
-          <label className="text-xl mr-4 text-gray-500">Password</label>
+          <label htmlFor="password" className="text-xl mr-4 text-gray-500">
+            Password
+          </label>
 
           <input
+            id="password"
             type="password"
+            autoComplete="current-password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             className="border-2 border-gray-500 px-4 py-2 w-full"
