@@ -101,3 +101,27 @@ export const loginUser = async (request, response, next) => {
     next(error);
   }
 };
+
+export const getCurrentUser = async (request, response, next) => {
+  try {
+    const user = await User.findById(request.user.userId).select(
+      "-password"
+    );
+
+    if (!user) {
+      return response.status(404).json({
+        message: "User not found",
+      });
+    }
+
+    return response.status(200).json({
+      user: {
+        id: user._id,
+        username: user.username,
+        email: user.email,
+      },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
