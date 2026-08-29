@@ -9,9 +9,27 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     const token = localStorage.getItem("token");
 
-    if (token) {
-      // restore user
-    }
+    if (!token) return;
+
+    const getCurrentUser = async () => {
+      try {
+        const response = await axios.get(
+          "http://localhost:4000/api/v1/auth/me",
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          },
+        );
+
+        setUser(response.data.user);
+      } catch (error) {
+        localStorage.removeItem("token");
+        setUser(null);
+      }
+    };
+
+    getCurrentUser();
   }, []);
 
   const login = async (email, password) => {
