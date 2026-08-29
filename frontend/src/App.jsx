@@ -8,6 +8,7 @@ import Showbook from "./pages/ShowBook";
 import Login from "./pages/Login";
 import Navbar from "./components/Navbar";
 import ProtectedRoute from "./components/ProtectedRoute";
+import PublicRoute from "./components/PublicRoute";
 
 const App = () => {
   const [toast, setToast] = useState(null);
@@ -52,7 +53,14 @@ const App = () => {
             </ProtectedRoute>
           }
         />
-        <Route path="/login" element={<Login />} />
+        <Route
+  path="/login"
+  element={
+    <PublicRoute>
+      <Login />
+    </PublicRoute>
+  }
+/>
       </Routes>
     </>
   );
