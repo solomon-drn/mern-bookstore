@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
+import api from "../api";
 import Spinner from "../components/Spinner";
 import BookCard from "../components/BookCard";
 import ConfirmDialog from "../components/ConfirmDialog";
@@ -15,8 +15,8 @@ const Home = () => {
   const [toast, setToast] = useState(null);
 
   useEffect(() => {
-    axios
-      .get("http://localhost:4000/api/v1/books")
+    api
+      .get("/books")
       .then((response) => {
         setBooks(response.data.data);
         setLoading(false);
@@ -47,8 +47,8 @@ const Home = () => {
     setDeleting(true);
     setError("");
 
-    axios
-      .delete(`http://localhost:4000/api/v1/books/${selectedBook._id}`)
+    api
+      .delete(`/books/${selectedBook._id}`)
       .then(() => {
         setBooks((currentBooks) =>
           currentBooks.filter((book) => book._id !== selectedBook._id),
