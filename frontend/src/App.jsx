@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useLocation, Routes, Route } from "react-router-dom";
+import { useLocation, useNavigate, Routes, Route } from "react-router-dom";
 import Toast from "./components/Toast";
 import Home from "./pages/Home";
 import EditBook from "./pages/EditBook";
@@ -13,6 +13,7 @@ import PublicRoute from "./components/PublicRoute";
 const App = () => {
   const [toast, setToast] = useState(null);
   const location = useLocation();
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (!toast) return;
@@ -27,8 +28,13 @@ const App = () => {
   useEffect(() => {
     if (location.state?.toast) {
       setToast(location.state.toast);
+
+      navigate(location.pathname, {
+        replace: true,
+        state: {},
+      });
     }
-  }, [location.state]);
+  }, [location, navigate]);
 
   return (
     <>
@@ -54,13 +60,13 @@ const App = () => {
           }
         />
         <Route
-  path="/login"
-  element={
-    <PublicRoute>
-      <Login />
-    </PublicRoute>
-  }
-/>
+          path="/login"
+          element={
+            <PublicRoute>
+              <Login />
+            </PublicRoute>
+          }
+        />
       </Routes>
     </>
   );
